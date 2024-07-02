@@ -1,46 +1,31 @@
-# See: https://circleci.com/docs/2.0/configuration-reference
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-orbs:
-  # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/browser-tools
-  browser-tools: circleci/browser-tools@1.4.8
-
-
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  build-and-test:
-    # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
-    # https://circleci.com/developer/images/image/cimg/node
+  say-hello:
+    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/executor-intro/ & https://circleci.com/docs/configuration-reference/#executor-job
     docker:
-      - image: cimg/node:20.4.0-browsers
+      # Specify the version you desire here
+      # See: https://circleci.com/developer/images/image/cimg/base
+      - image: cimg/base:current
+
+    # Add steps to the job
+    # See: https://circleci.com/docs/jobs-steps/#steps-overview & https://circleci.com/docs/configuration-reference/#steps
     steps:
-      - browser-tools/install-chrome
+      # Checkout the code as the first step.
       - checkout
       - run:
-          name: NPM Install
-          command: npm install --force
-      - run:
-          name: Build Project
-          command: npm run build
-      - run:
-          name: Launch Server
-          command: npm run server
-          background: true
-      - run:
-          command: sleep 5;
-      - run:
-          name: Launch Web
-          command: google-chrome http://localhost:5777/utest/
-          background: true
-      - run:
-          command: sleep 5;
-      - run:
-          name: Run tests
-          command: npm run test
+          name: "Say hello"
+          command: "echo Hello, World!"
 
+# Orchestrate jobs using workflows
+# See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-  # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
-  # CircleCI will run this workflow on every commit.
-  # https://circleci.com/docs/2.0/configuration-reference/#workflows
-  TestRunner:
+  say-hello-workflow: # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - build-and-test
+      - say-hello
